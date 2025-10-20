@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice {{ invoice_no }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #000;
+      position: relative;
+    }
+
+    /* Watermark */
+    body::after {
+      content: "Pixel Pulse";
+      position: absolute;
+      top: 35%;
+      left: 20%;
+      font-size: 100px;
+      color: rgba(200, 200, 200, 0.2);
+      transform: rotate(-20deg);
+      z-index: 0;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #000;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-section img {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .invoice-title {
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    .client-info {
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .client-info h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .client-info p {
+      margin: 4px 0;
+      font-size: 13px;
+    }
+
+    .table-container {
+      margin-top: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 8px;
+      border-bottom: 1px solid #000;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f9f9f9;
+      font-weight: 600;
+    }
+
+    td.right, th.right {
+      text-align: right;
+    }
+
+    .totals {
+      margin-top: 20px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .totals p {
+      margin: 4px 0;
+    }
+
+    .bottom-section {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bottom-section h4 {
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .footer {
+      border-top: 1px solid #000;
+      margin-top: 40px;
+      padding-top: 10px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer .contact {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .footer img {
+      width: 15px;
+      height: 15px;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
+    .thankyou {
+      font-weight: 700;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-section">
+      <img src="images/logo.png" alt="Logo">
+      <div class="logo-text">
+        Pixel<br>Pulse
+      </div>
+    </div>
+    <div class="invoice-title">INVOICE</div>
+  </div>
+
+  <!-- Client Info -->
+  <div class="client-info">
+    <h3>INVOICE TO:</h3>
+    <p><strong>{{ client }}</strong></p>
+    <p>Invoice No: {{ invoice_no }}</p>
+    <p>Invoice Date: {{ date }}</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <tr>
+        <th>NAME</th>
+        <th>QTY</th>
+        <th>PRICE</th>
+        <th class="right">TOTAL</th>
+      </tr>
+      {% for item in services %}
+      <tr>
+        <td>{{ item["Service"] }}</td>
+        <td>{{ "%02d"|format(item["Qty"]) }}</td>
+        <td>PKR {{ "{:,.0f}".format(item["Amount"]) }}</td>
+        <td class="right">PKR {{ "{:,.0f}".format(item["Subtotal"]) }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <!-- Totals -->
+  <div class="totals">
+    <p>Sub-total: PKR {{ "{:,.0f}".format(total) }}</p>
+    <p><strong>Total: PKR {{ "{:,.0f}".format(total) }}</strong></p>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-section">
+    <div class="bank">
+      <h4>BANK DETAILS</h4>
+      <p><strong>MEEZAN BANK</strong><br>
+      SYED MUHAMMAD HASAN JAWAID<br>
+      PK32MEZN0001930109968206</p>
+
+      <p><strong>SADAPAY</strong><br>
+      HASAN JAWAID<br>
+      0310 246134</p>
+    </div>
+
+    <div class="terms">
+      <h4>TERMS</h4>
+      <p>PAYMENT IS DUE WITHIN 3 DAYS FROM THE DATE OF INVOICE SENT.<br>
+      PLEASE MAKE PAYMENT TO THE MENTIONED ACCOUNTS ONLY.<br>
+      IN CASE OF QUESTIONS PLEASE REACH OUT TO US.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="contact">
+      <span>📞 0310-2461341 | 0309-2511984</span>
+      <span>📧 hasan92jawed@gmail.com | shaikhumair297@gmail.com</span>
+    </div>
+    <div class="thankyou">THANK YOU!</div>
+  </div>
+</body>
+</html>

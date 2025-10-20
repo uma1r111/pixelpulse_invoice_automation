@@ -1,0 +1,47 @@
+name: Generate Invoices
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    paths:
+      - 'invoices.xlsx'  # Trigger when Excel file is updated
+
+jobs:
+  generate-invoices:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas reportlab openpyxl
+      
+      - name: Create output directory
+        run: mkdir -p output
+      
+      - name: Generate invoices
+        run: python invoice_generator.py
+      
+      - name: Upload invoice PDFs
+        uses: actions/upload-artifact@v3
+        with:
+          name: invoices
+          path: output/*.pdf
+          retention-days: 30
+      
+      - name: Commit generated invoices (optional)
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add output/*.pdf
+          git diff --quiet && git diff --staged --quiet || git commit -m "Generated invoices from workflow"
+          git push
+        continue-on-error: true  # Don't fail if nothing to commit
